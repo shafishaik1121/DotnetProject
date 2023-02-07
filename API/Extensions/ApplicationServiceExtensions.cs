@@ -7,6 +7,8 @@ using Application.Core;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 namespace API.Extensions
 {
@@ -21,16 +23,20 @@ namespace API.Extensions
             {
                opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
             });
-            services.AddCors(opt =>
+
+               services.AddCors(opt =>
             {
                opt.AddPolicy("CorsPolicy", policy =>
                {
                policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
                });
+
             });
             services.AddMediatR(typeof(List.Handler));
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
-
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<Create>();
+           
             return services;
  
         }
